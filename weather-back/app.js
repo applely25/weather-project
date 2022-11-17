@@ -208,11 +208,55 @@ app.get("/data", async (req, res) => {
     const crowldata2 = await getDataACCUWEATHER();
     const crowldata3 = await getDataWEATHERNEWS();
 
-    res.status(200).json({
-      crowldata1,
-      crowldata2,
-      crowldata3,
-    });
+    const allData = {
+      week: [],
+      lowtemp: [],
+      hightemp: [],
+      rainfall: [],
+    };
+    for (let i = 0; i <= 9; i++) {
+      allData.week.push({
+        month: crowldata1.week[i * 2],
+        day: crowldata1.week[i * 2 + 1],
+      });
+      allData.lowtemp.push(
+        (
+          (crowldata1.lowtemp[i] +
+            crowldata2.lowtemp[i] +
+            crowldata3.lowtemp[i]) /
+          3
+        ).toFixed(1)
+      );
+      allData.hightemp.push(
+        (
+          (crowldata1.hightemp[i] +
+            crowldata2.hightemp[i] +
+            crowldata3.hightemp[i]) /
+          3
+        ).toFixed(1)
+      );
+      allData.rainfall.push({
+        sun: (
+          (crowldata1.rainfall[i * 2] +
+            crowldata2.rainfall[i * 2] +
+            crowldata3.rainfall[i * 2]) /
+          3
+        ).toFixed(1),
+        moon: (
+          (crowldata1.rainfall[i * 2 + 1] +
+            crowldata2.rainfall[i * 2 + 1] +
+            crowldata3.rainfall[i * 2 + 1]) /
+          3
+        ).toFixed(1),
+      });
+    }
+    console.log(allData.week);
+    console.log(allData.lowtemp);
+    console.log(allData.hightemp);
+    console.log(allData.rainfall);
+
+    res.status(200).json(
+      allData);
   } catch (err) {
     console.error(err);
   }
